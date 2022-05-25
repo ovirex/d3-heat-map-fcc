@@ -39,62 +39,63 @@ Legend(
 // Add tooltip
 const tooltip = d3.select(".chart").append("div").attr("id", "tooltip");
 
-d3.json(url).then((data) => {
-    const dataset = data.monthlyVariance;
-    const baseTemp = data.baseTemperature;
+d3.json(url)
+    .then((data) => {
+        const dataset = data.monthlyVariance;
+        const baseTemp = data.baseTemperature;
 
-    const minYear = d3.min(dataset, (d) => d.year);
-    const maxYear = d3.max(dataset, (d) => d.year + 1);
+        const minYear = d3.min(dataset, (d) => d.year);
+        const maxYear = d3.max(dataset, (d) => d.year + 1);
 
-    const minMonth = d3.min(dataset, (d) => d.month - 0.5);
-    const maxMonth = d3.max(dataset, (d) => d.month + 0.5);
+        const minMonth = d3.min(dataset, (d) => d.month - 0.5);
+        const maxMonth = d3.max(dataset, (d) => d.month + 0.5);
 
-    xScale.domain([minYear, maxYear]);
-    yScale.domain([minMonth, maxMonth]);
+        xScale.domain([minYear, maxYear]);
+        yScale.domain([minMonth, maxMonth]);
 
-    const xAxis = d3.axisBottom(xScale);
-    xAxis.tickFormat(d3.format("d"));
+        const xAxis = d3.axisBottom(xScale);
+        xAxis.tickFormat(d3.format("d"));
 
-    const yAxis = d3.axisLeft(yScale);
+        const yAxis = d3.axisLeft(yScale);
 
-    // Parse each tick into a date so It can be format to the month name
-    yAxis.tickFormat((d) => formatToMonthName(d));
-    // Append axis to the SVG
-    svg.append("g")
-        .attr("id", "x-axis")
-        .attr("transform", `translate(0,${h})`)
-        .call(xAxis);
+        // Parse each tick into a date so It can be format to the month name
+        yAxis.tickFormat((d) => formatToMonthName(d));
+        // Append axis to the SVG
+        svg.append("g")
+            .attr("id", "x-axis")
+            .attr("transform", `translate(0,${h})`)
+            .call(xAxis);
 
-    svg.append("g")
-        .attr("id", "y-axis")
-        .attr("transform", `translate(0,0)`)
-        .call(yAxis);
+        svg.append("g")
+            .attr("id", "y-axis")
+            .attr("transform", `translate(0,0)`)
+            .call(yAxis);
 
-    // Add data elements to the SVG
-    svg.append("g")
-        .selectAll("rect")
-        .data(dataset)
-        .enter()
-        .append("rect")
-        .attr("class", "cell")
-        .attr("height", h / maxMonth)
-        .attr("width", w / (maxYear - minYear))
-        .attr("fill", (d) => {
-            const totalTemp = baseTemp + d.variance;
-            return colors(totalTemp);
-        })
-        .attr("x", (d) => xScale(d.year))
-        .attr("y", (d) => yScale(d.month - 0.5))
-        .attr("data-year", (d) => d.year)
-        .attr("data-month", (d) => d.month - 1)
-        .attr("data-temp", (d) => baseTemp + d.variance)
-        .on("mouseover", (event, d) => {
-            tooltip.classed("show", true);
-            const month = formatToMonthName(d.month);
+        // Add data elements to the SVG
+        svg.append("g")
+            .selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("class", "cell")
+            .attr("height", h / maxMonth)
+            .attr("width", w / (maxYear - minYear))
+            .attr("fill", (d) => {
+                const totalTemp = baseTemp + d.variance;
+                return colors(totalTemp);
+            })
+            .attr("x", (d) => xScale(d.year))
+            .attr("y", (d) => yScale(d.month - 0.5))
+            .attr("data-year", (d) => d.year)
+            .attr("data-month", (d) => d.month - 1)
+            .attr("data-temp", (d) => baseTemp + d.variance)
+            .on("mouseover", (event, d) => {
+                tooltip.classed("show", true);
+                const month = formatToMonthName(d.month);
 
-            const totalTemp = d3.format(".1f")(baseTemp + d.variance);
-            const differenceTemp = d3.format("+.1f")(totalTemp - baseTemp);
-            tooltip.html(`
+                const totalTemp = d3.format(".1f")(baseTemp + d.variance);
+                const differenceTemp = d3.format("+.1f")(totalTemp - baseTemp);
+                tooltip.html(`
             <div>
                 ${month} - ${d.year}<br>
                 ${totalTemp}°C<br>
@@ -102,13 +103,14 @@ d3.json(url).then((data) => {
             </div>
             `);
 
-            tooltip.attr("data-year", d.year);
+                tooltip.attr("data-year", d.year);
 
-            tooltip.style("top", event.pageY - legendHeight * 1.6 + "px");
-            tooltip.style("left", event.pageX - 80 + "px");
-        })
-        .on("mouseout", () => tooltip.classed("show", false));
-});
+                tooltip.style("top", event.pageY - legendHeight * 1.6 + "px");
+                tooltip.style("left", event.pageX - 80 + "px");
+            })
+            .on("mouseout", () => tooltip.classed("show", false));
+    })
+    .catch((error) => console.error(error));
 
 function formatToMonthName(data) {
     const date = d3.timeParse("%m")(data);
