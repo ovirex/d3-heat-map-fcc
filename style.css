@@ -1,0 +1,45 @@
+* {
+    font-family: sans-serif;
+}
+
+svg {
+    display: block;
+    margin: 0 auto;
+    overflow: visible;
+}
+
+svg .cell:hover {
+    outline: 1px solid #000;
+}
+
+.info {
+    text-align: center;
+}
+
+.chart {
+    position: relative;
+}
+
+#legend {
+    margin-top: 3em;
+}
+
+#tooltip {
+    position: absolute;
+    width: 140px;
+    height: 100px;
+    background-color: #000000ba;
+    pointer-events: none;
+    opacity: 0;
+    color: #fff;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.7em;
+    border-radius: 12px;
+}
+
+#tooltip.show {
+    opacity: 1;
+}
