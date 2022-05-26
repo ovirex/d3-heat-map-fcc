@@ -30,7 +30,6 @@ Legend(
         d3.schemeRdYlBu[11]
     ),
     {
-        title: "Unemployment rate (%)",
         tickSize: 0,
         tickFormat: d3.format(".1f"),
     }
